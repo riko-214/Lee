@@ -17,7 +17,7 @@ function windowResized(){
 
 function draw(){
   background(160, 192, 255);
-  const size = height * 0.1; // キャラクターのサイズ
+  const size = height * 0.1; // キャラクターのサイズは高さの10%にする
 
   // 地面を描く
   const groundY = height * 0.8;
@@ -25,16 +25,61 @@ function draw(){
   rect(0, groundY, width, height - groundY);
 
   // BLANK[1] キャラクターの左右移動
+ const cycle = 100; // 1周期のフレーム数
+ let count = 0; // 現在のフレーム数（変数）
+ 
+ let scrollX = 0;// 画面の横移動量の変数
+ if (keyIsDown(LEFT_ARROW)) {
+    vx= -5; // 左キーで画面が右に動く
+  }
+  else if (keyIsDown(RIGHT_ARROW)) {
+    vx = +5; // 右キーで画面が左に動く
+  }
+  else vx=0
+let isShiftPressed = keyIsDown(SHIFT);
+  
+  // 通常スピードとダッシュ時のスピードを定義
+  let normalSpeed = 5;
+  let boostSpeed = 10; // 好きな速度に変更
+  
+  // 状態に応じた現在の速度を決定
+  let currentSpeed;
+if (isShiftPressed) {
+  currentSpeed = boostSpeed; // 押されていれば10
+} else {
+  currentSpeed = normalSpeed; // 押されていなければ5
+}
 
-  // BLANK[2] 重力とジャンプ
+  if (keyIsDown(LEFT_ARROW)) {
+    vx = -currentSpeed; // 左キー
+  }
+  else if (keyIsDown(RIGHT_ARROW)) {
+    vx = +currentSpeed; // 右キー
+  }
+  else {
+    vx = 0;
+  }
 
-  // 速くなりすぎないように制限
-  vx = constrain(vx, -20, 20);
-  vy = constrain(vy, -20, 20);
+// 1. 速度に重力を加える
+if (y + size / 2 >= groundY) {
+  y = groundY - size / 2; // 地面に埋まらないように位置を補正
+  vy = 0; 
 
-  // 位置を更新
-  x += vx;
-  y += vy;
+
+if (keyIsDown(UP_ARROW)) {
+    vy = -15; 
+  }
+  
+}else{
+  vy += g;
+}
+vx = constrain(vx, -20, 20);
+vy = constrain(vy, -20, 20);
+// 2. 速度に合わせて位置（座標）を更新する
+x += vx;
+y += vy;
+
+
 
   // キャラクターを描く
   fill(0);
